@@ -3,7 +3,6 @@ module.exports = (route, name) => {
     routeStringContent += `const routes = express.Router();\n`;
     routeStringContent += `const authService = require('../services/auth-service');\n`;
     routeStringContent += `const controller = require('../controllers/${name}-controller');\n`;
-    routeStringContent += `const ${name} = require('../models/${name}');\n\n`;
 
     for (let [key, val] of Object.entries(route)) {
         console.log(key);

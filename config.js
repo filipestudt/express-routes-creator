@@ -1,4 +1,5 @@
 module.exports = {
     routesPath: 'routes/',
-    outputPath: 'output/routes'
+    routesOutputPath: 'output/routes',
+    controllersOutputPath: 'output/controllers',
 }
