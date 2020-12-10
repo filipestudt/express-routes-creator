@@ -1,5 +1,5 @@
 {
-  "name": "express-routes-generator",
+  "name": "express-routes-creator",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -9,12 +9,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/filipestudt/express-routes-generator.git"
+    "url": "git+https://github.com/filipestudt/express-routes-creator.git"
   },
-  "author": "Filipe Studt",
+  "author": "filipestudt",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/filipestudt/express-routes-generator/issues"
+    "url": "https://github.com/filipestudt/express-routes-creator/issues"
   },
-  "homepage": "https://github.com/filipestudt/express-routes-generator#readme"
+  "homepage": "https://github.com/filipestudt/express-routes-creator#readme"
 }
