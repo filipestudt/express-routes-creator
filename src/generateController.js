@@ -1,11 +1,12 @@
-module.exports = (route, name) => {
-    var model = name[0].toUpperCase() + name.slice(1);
-    var content = `const ${model} = require('../models/${model}');\n\n`;
+module.exports = (route, name, models) => {
+    var modelName = name[0].toUpperCase() + name.slice(1);
+    var content = `const ${modelName} = require('../models/${modelName}');\n\n`;
+    var model = models[modelName];
 
     for (let [key, val] of Object.entries(route)) {
         let action = require('./actions/' + val.action);
         content += `exports.${val.action} = async (req, res, next) => {`;
-        content += action(model);
+        content += action(modelName, model);
         content += `\n}\n\n`;
     }
 
