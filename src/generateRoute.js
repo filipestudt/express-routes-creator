@@ -5,14 +5,13 @@ module.exports = (route, name) => {
     routeStringContent += `const controller = require('../controllers/${name}-controller');\n\n`;
 
     for (let [key, val] of Object.entries(route)) {
-        console.log(key);
-        console.log(val);
 
-        let method = key.includes('get') ? 'get' :
-            key.includes('post') ? 'post' :
-                key.includes('put') ? 'put' :
-                    key.includes('delete') ? 'delete' :
-                        val.method;
+        let method = val.method ? val.method :
+            key.includes('get') ? 'get' :
+                key.includes('post') ? 'post' :
+                    key.includes('put') ? 'put' :
+                        key.includes('delete') ? 'delete' : '';
+
 
         let action = val.action || key;
 
