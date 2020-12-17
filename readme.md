@@ -1,7 +1,8 @@
 # express-routes-creator
 
-> Generate routes and controllers quickly using a configuration file.
-
+> Generate routes and controllers quickly using a configuration file.\
+> Made to be used with sequelize.\
+> To use in other contexts edit the actions.
 
 ## Usage
 
@@ -42,6 +43,7 @@ expressRoutesCreator(config);
 To create the routes and controllers the .js files in the routesPath must have the basic informations
 
 ```js
+// posts.js
 module.exports = {
     get: {
         url: '/',
