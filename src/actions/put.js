@@ -1,15 +1,13 @@
 module.exports = (modelName, model) => {
     var ownerField = '';
-    var where = `${ownerField} = await getUserIdByToken(req, res),\n\t\t\t\t`;
+    var where = '';
 
-    /**
-     * Busca qual é o atributo owner=true do model
-     * O owner é o usuário logado, por isso pega o id a partir do token
-     */
-    for (let [key, value] of Object.entries(model.tableAttributes)) {
-        if (value.owner == true) {
-            ownerField = key;
-            break;
+    if (model) {
+        for (let [key, value] of Object.entries(model.tableAttributes)) {
+            if (value.owner == true) {
+                ownerField = key;
+                break;
+            }
         }
     }
 
@@ -28,15 +26,15 @@ module.exports = (modelName, model) => {
         });
 
         if (rows[0] > 0) {
-            res.status(200).send({ message: 'Editado com sucesso' });
+            res.status(200).send({ message: 'Successfully edited' });
         }
         else {
-            res.status(500).send({ message: 'Erro ao editar, o registro não existe ou você não tem permissão' });
+            res.status(500).send({ message: "Error at update, the register does not exist or you don't have the permission for this" });
         }
     }
     catch (err) {
         res.status(500).send({
-            message: 'Erro inesperado'
+            message: 'Unexpected error'
         })
     }`
 }
