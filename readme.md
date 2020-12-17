@@ -21,8 +21,7 @@ The config file
     routesPath, // absolute path where the files to generate the routes are
     routesOutputPath // where the routes files will be created
     controllersOutputPath // where the controllers files will be created
-    models // the models if using sequelize
-    owner // true or false, if will consider the owner field on sequelize
+    models // the models attribute of the sequelize instance object
 }
 ```
 
@@ -33,8 +32,7 @@ var config = {
     routesPath: __dirname + '/routes',
     routesOutputPath: './src/routes',
     controllersOutputPath: './src/controllers',
-    models: db.models,
-    owner: true
+    models: db.models // db is the instance of sequelize after made the connection and initialized the models
 }
 expressRoutesCreator(config);
 ```
@@ -90,12 +88,7 @@ const Post = require('../models/Post');
 
 exports.get = async (req, res, next) => {
     try {
-        var data = await Post.findAll({
-            attributes: {
-                exclude: model.options.exclude
-            },
-            include: model.options.include
-        });
+        var data = await Post.findAll();
         res.status(200).send(data);
     }
     catch (err) {
@@ -107,11 +100,7 @@ exports.get = async (req, res, next) => {
 
 exports.getWithParams = async (req, res, next) => {
     try {
-        var data = await Post.findAll({
-            attributes: {
-                exclude: model.options.exclude
-            },
-            include: model.options.include,
+        var data = await Post.findAll({            
             where: { ...req.params }
         });
         res.status(200).send(data);
@@ -137,7 +126,7 @@ exports.put = async (req, res, next) => {
             res.status(200).send({ message: 'Successfully edited' });
         }
         else {
-            res.status(500).send({ message: "Error at update, the register does not exist or you don't have the permission" });
+            res.status(500).send({ message: "Error at update, the register does not exist or you don't have the permission for this" });
         }
     }
     catch (err) {
@@ -149,11 +138,28 @@ exports.put = async (req, res, next) => {
 
 exports.delete = async (req, res, next) => {
     try {
+        const rows = await Post.destroy(req.body, {  
+            where: {
+                authorId = await getUserIdByToken(req, res),
+				...req.params
+            }
+        });
 
+        if (rows > 0) {
+            res.status(200).send({ message: 'Successfully deleted' });
+        }
+        else {
+            res.status(500).send({ message: "Error while deleting, the register does not exist or you don't have the permission for this" });
+        }
     }
     catch (err) {
-
+        res.status(500).send({
+            message: 'Unexpected error'
+        })
     }
 }
-
 ```
+
+## How to edit the controllers code
+
+The action attribute used on the route generation file refer to a action in ./src/actions, you can edit those files or create new actions to suit your needs
