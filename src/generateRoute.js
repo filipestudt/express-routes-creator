@@ -1,4 +1,4 @@
-module.exports = (route, name) => {
+module.exports = (route, name, consign) => {
     var routeStringContent = `const express = require('express');\n`;
     routeStringContent += `const routes = express.Router();\n`;
     routeStringContent += `const authService = require('../services/auth-service');\n`;
@@ -20,7 +20,12 @@ module.exports = (route, name) => {
         routeStringContent += `controller.${action});\n`;
     }
 
-    routeStringContent += `\nmodule.exports = app => { app.use('/${name}s', routes); }`;
+    if (consign) {
+        routeStringContent += `\nmodule.exports = app => { app.use('/${name}s', routes); }`;
+    }
+    else {
+        routeStringContent += `\nmodule.exports = routes;`;
+    }
 
     return routeStringContent;
 }
