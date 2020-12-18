@@ -3,6 +3,7 @@ const util = require('util');
 const generateRoute = require('./src/generateRoute');
 const generateController = require('./src/generateController');
 const generateRouteFromModel = require('./src/generateRouteFromModel');
+const returnDefaultRoutes = require('./src/returnDefaultRoutes');
 
 exports.generateFromFile = (config) => {
     /* 
@@ -39,9 +40,9 @@ exports.generateFromFile = (config) => {
  * 
  * Expected params:
  * {
- *  models: db.models,
- *  routesOutput: '',
- *  controllersOutput: ''
+ *  models,
+ *  routesOutput,
+ *  controllersOutput
  * }
  * @param {Object} config 
  */
@@ -67,12 +68,48 @@ exports.generateFromModel = (config) => {
     }
 }
 
-
+/**
+ * @description
+ * Generate default routes from the model like the generateFromModel function,
+ * but save in .js files
+ * Expected params:
+ * {
+ *  models,
+ *  output
+ * }
+ * @param {Object} config 
+ */
 exports.generateFileFromModel = (config) => {
-    if (config.defaultRoutes) {
-        let obj = generateRouteFromModel(config.models);
-        for (let [key, val] of Object.entries(obj)) {
-            fs.writeFileSync(config.configFileOutputPath + '/' + key[0].toLocaleLowerCase() + key.slice(1) + '.js', 'module.exports = ' + util.inspect(val), 'utf-8');
-        }
+    if (!config.models || !config.output) {
+        throw 'Missing models or output argument';
+    }
+    let obj = generateRouteFromModel(config.models);
+
+    fs.mkdirSync(config.output, { recursive: true });
+
+    for (let [key, val] of Object.entries(obj)) {
+        fs.writeFileSync(config.output + '/' + key[0].toLocaleLowerCase() + key.slice(1) + '.js', 'module.exports = ' + util.inspect(val), 'utf-8');
+    }
+}
+
+/**
+ * @description
+ * Recieves an array and generate default routes for every name on the array
+ * Expected params:
+ * {
+ *  routes,
+ *  output
+ * }
+ * @param {Object} config 
+ */
+exports.generateFile = (config) => {
+    if (!config.routes || !config.output) {
+        throw 'Missing routes or output argument';
+    }
+
+    fs.mkdirSync(config.output, { recursive: true });
+
+    for (let route of config.routes) {
+        fs.writeFileSync(config.output + '/' + route + '.js', 'module.exports = ' + util.inspect(returnDefaultRoutes()), 'utf-8');
     }
 }
