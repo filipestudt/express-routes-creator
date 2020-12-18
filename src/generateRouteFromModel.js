@@ -1,15 +1,17 @@
-module.exports = (config) => {
+module.exports = (models) => {
     var obj = {};
 
-    for (let [key, val] of Object.entries(config.models)) {
+    for (let [key, val] of Object.entries(models)) {
         obj[key] = {
             get: {
-                url: 'get',
-                action: '/'
+                url: '/',
+                method: 'get',
+                action: 'get'
             },
             post: {
-                url: 'post',
-                action: '/'
+                url: '/',
+                method: 'post',
+                action: 'post'
             }
         };
 
@@ -18,16 +20,19 @@ module.exports = (config) => {
                 let reff = obj[key];
                 reff['getById'] = {
                     url: '/getById/:' + tableAttribute,
+                    method: 'get',
                     action: 'getWithParams'
                 };
 
                 reff['put'] = {
                     url: '/:' + tableAttribute,
+                    method: 'put',
                     action: 'put'
                 };
 
                 reff['delete'] = {
                     url: '/:' + tableAttribute,
+                    method: 'delete',
                     action: 'delete'
                 };
             }
