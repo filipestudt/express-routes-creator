@@ -4,6 +4,7 @@ const generateRoute = require('./src/generateRoute');
 const generateController = require('./src/generateController');
 const generateRouteFromModel = require('./src/generateRouteFromModel');
 const returnDefaultRoutes = require('./src/returnDefaultRoutes');
+const validateReplace = require('express-routes-creator/src/validateReplace');
 
 exports.generateFromFile = (config) => {
     /* 
@@ -12,6 +13,7 @@ exports.generateFromFile = (config) => {
     if (!config.filesPath) {
         throw 'Missing filesPath argument';
     }
+    validateReplace(config);
 
     var files = fs.readdirSync(config.filesPath);
 
@@ -50,6 +52,7 @@ exports.generateFromModel = (config) => {
     if (!config.models) {
         throw 'Missing models argument';
     }
+    validateReplace(config);
 
     let obj = generateRouteFromModel(config.models);
 
@@ -83,6 +86,8 @@ exports.generateFileFromModel = (config) => {
     if (!config.models || !config.output) {
         throw 'Missing models or output argument';
     }
+    validateReplace(config);
+
     let obj = generateRouteFromModel(config.models);
 
     fs.mkdirSync(config.output, { recursive: true });
@@ -106,6 +111,7 @@ exports.generateFile = (config) => {
     if (!config.routes || !config.output) {
         throw 'Missing routes or output argument';
     }
+    validateReplace(config);
 
     fs.mkdirSync(config.output, { recursive: true });
 
