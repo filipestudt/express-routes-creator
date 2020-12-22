@@ -4,7 +4,20 @@
 > Made to be used with sequelize.\
 > To use in other contexts edit the actions.
 
-## Usage
+# Table of contents
+
+* [Usage](#usage)
+* [Methods Detailed](#methods-detailed)
+    * [Generate From File](#generate-from-file)
+    * [Generate From Model](#generate-from-model)
+    * [Generate File](#generate-file)
+    * [Generate File From Model](#generate-file-from-model)
+* [Parameters Explained](#parameters-explained)
+* [Usage Examples](#usage-examples)
+
+This documentation is still a working in progress.
+
+# Usage
 
 ```sh
 npm install express-routes-creator
@@ -13,37 +26,174 @@ npm install express-routes-creator
 ```js
 const expressRoutesCreator = require('express-routes-creator');
 
-expressRoutesCreator(config);
-```
+expressRoutesCreator.generateFromFile({
+    // absolute path where the files to generate the routes are
+    filesPath, 
+    // relative path output where the routes files will be created (optional)
+    // you can pass only the routesOutput to generate only the routes
+    // or only the controllersOutput to only generate the controllers
+    // or either the two arguments
+    routesOutput, 
+    // relative path output where the controllers files will be created (optional)    
+    controllersOutput, 
+    // the models attribute of the sequelize instance object (optional)
+    // only used to generate controllers
+    models, 
+    //boolean argument to generate the routes file ready to import using the consign module (optional, false by default)
+    consign, 
+    //boolean argument to replace the files in the output folder (optional)
+    replace
+})
 
-The config file
+expressRoutesCreator.generateFromModel({
+    models,
+    routesOutput,
+    controllersOutput,
+    consign, 
+    replace
+})
+
+expressRoutesCreator.generateFile({
+    routes, //array
+    output
+})
+
+expressRoutesCreator.generateFileFromModel({
+    models,
+    output
+})
+```
+See more about the parameters [here](#parameters-explained).
+
+# Methods Detailed 
+
+## Generate From File
+
+Generates using a javascript config file
+
 ```js
-{
-    routesPath, // absolute path where the files to generate the routes are
-    routesOutputPath // where the routes files will be created
-    controllersOutputPath // where the controllers files will be created
-    models // the models attribute of the sequelize instance object
+const expressRoutesCreator = require('express-routes-creator');
+
+expressRoutesCreator.generateFromFile({
+    // absolute path where the configuration files to generate the routes are
+    filesPath: __dirname + '/routes', 
+    // relative path output where the routes files will be created (optional)
+    // you can pass only the routesOutput to generate only the routes
+    // or only the controllersOutput to only generate the controllers
+    // or either the two arguments
+    routesOutput: 'src/routes', 
+    // relative path output where the controllers files will be created (optional)   
+    controllersOutput: 'src/controllers', 
+    // the models attribute of the sequelize instance object (optional)
+    // only used to generate controllers
+    models: db.models, 
+    //boolean argument to generate the routes file ready to import using the consign module (optional, false by default)
+    consign: true, 
+    ///boolean argument to replace the files in the output folder (optional)
+    replace: false 
+})
+```
+Example of the configuration file that generates the routes:
+```js
+module.exports = {
+    get: {
+        url: '/',
+        action: 'get'
+    },
+    getByAuthor: {
+        url: '/:authorId',
+        logged: true,
+        action: 'getWithParams'
+    },
+    put: {
+        url: '/:id',
+        logged: true,
+        action: 'put'
+    },
+    delete: {
+        url: '/:id',
+        logged: true,
+        action: 'delete'
+    }
 }
 ```
+The action refer to a file that generates a generic controller using the models name.
 
-Example of config 
+## Generate From Model
+Generates using sequelize models
 
 ```js
-var config = {
-    routesPath: __dirname + '/routes',
-    routesOutputPath: './src/routes',
-    controllersOutputPath: './src/controllers',
-    models: db.models // db is the instance of sequelize after made the connection and initialized the models
-}
-expressRoutesCreator(config);
+const expressRoutesCreator = require('express-routes-creator');
+
+expressRoutesCreator.generateFromModel({
+    models: db.models, // the models attribute of the sequelize instance object
+    routesOutput: 'src/routes',
+    controllersOutput: 'src/controllers', 
+    consign: false, //optional
+    replace: false //optional
+})
 ```
 
-## Making routes and controllers
+The db variable in this example is the return of the sequelize connection object and after all models are loaded, so the application can read the tabble attributes from the models.
 
-To create the routes and controllers the .js files in the routesPath must have the basic informations
+## Generate File
+Generates configuration files with default routes to make easier to start
 
 ```js
-// posts.js
+const expressRoutesCreator = require('express-routes-creator');
+
+expressRoutesCreator.generateFile({
+    routes: ['user', 'post'], //array
+    output: 'src/output'
+})
+```
+
+This example generates two files: user.js, post.js
+```js
+//users.js
+module.exports = {
+  get: { url: '/', method: 'get', action: 'get' },
+  post: { url: '/', method: 'post', action: 'post' },
+  put: { url: '/:id', method: 'put', action: 'put' },
+  delete: { url: '/:id', method: 'delete', action: 'delete' }
+}
+```
+Now this files could be used to generate the routes and controllers, and you can edit they to generate custom routes.
+
+
+## Generate File From Model
+
+```js
+const expressRoutesCreator = require('express-routes-creator');
+
+expressRoutesCreator.generateFileFromModel({
+    models: db.models, // the models attribute of the sequelize instance object
+    output: 'src/output'
+})
+```
+
+# Parameters explained
+
+## Consign
+
+If is true the routes file will have the module.exports ready for be imported using the Consign module
+
+```js
+module.exports = app => { app.use('/users', routes); }
+```
+
+## Replace
+
+When passing a output folder that is not empty as argument, the program will throw a exception to protect those files, so if you are sure that you want to replace the files inside the folder, then you can pass the replace argument as true.
+
+# Usage examples
+
+## Generating from file
+
+To create the routes and controllers the .js files in the routesPath must have this basic informations:
+
+```js
+// post.js
 module.exports = {
     get: {
         url: '/',
@@ -67,10 +217,23 @@ module.exports = {
 }
 ```
 
-That would generate this:
+When using the generateFromFile method:
 
 ```js
-// route file
+const expressRoutesCreator = require('express-routes-creator');
+
+expressRoutesCreator.generateFromFile({
+    filesPath, 
+    routesOutput,   
+    controllersOutput, 
+    models
+})
+```
+
+The result will be this:
+
+```js
+// post-route.js
 const express = require('express');
 const routes = express.Router();
 const authService = require('../services/auth-service');
@@ -81,11 +244,11 @@ routes.get('/:authorId', authService.authorize, controller.getWithParams);
 routes.put('/:id', authService.authorize, controller.put);
 routes.delete('/:id', authService.authorize, controller.delete);
 
-module.exports = app => { app.use('/posts', routes); }
+module.exports = routes;
 ```
 
 ```js
-// controller file
+// post-controller.js
 const Post = require('../models/Post');
 
 exports.get = async (req, res, next) => {
@@ -113,6 +276,22 @@ exports.getWithParams = async (req, res, next) => {
         })
     }
 }
+
+exports.post = async (req, res, next) => {
+	try {
+		req.body[authorId] = await getUserIdByToken(req, res);
+        const response = await Post.create(req.body);
+        res.status(201).send({
+            message: 'Successfully created'
+        });
+    }
+    catch (e) {
+        res.status(500).send({
+            message: 'Unexpected error'
+        })
+    }
+}
+
 
 exports.put = async (req, res, next) => {
     try {
