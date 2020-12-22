@@ -18,7 +18,7 @@ module.exports = (modelName, model) => {
     str += `
         const response = await ${modelName}.create(req.body);
         res.status(201).send({
-            message: 'Operação efetuado com sucesso'
+            message: 'Successfully created'
         });
     }
     catch (e) {
