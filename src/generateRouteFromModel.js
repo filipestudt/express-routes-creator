@@ -36,6 +36,15 @@ module.exports = (models) => {
                     action: 'delete'
                 };
             }
+
+            if (attributeValues.references && attributeValues.references.model) {
+                let reff = obj[key];
+                reff['getBy' + attributeValues.references.model] = {
+                    url: '/getBy' + attributeValues.references.model.charAt(0).toUpperCase() + attributeValues.references.model.slice(1) + '/:id',
+                    method: 'get',
+                    action: 'getWithParams'
+                }
+            }
         }
     }
 
