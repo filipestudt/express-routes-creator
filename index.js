@@ -93,7 +93,7 @@ exports.generateFileFromModel = (config) => {
     fs.mkdirSync(config.output, { recursive: true });
 
     for (let [key, val] of Object.entries(obj)) {
-        fs.writeFileSync(config.output + '/' + key[0].toLocaleLowerCase() + key.slice(1) + '.js', 'module.exports = ' + util.inspect(val), 'utf-8');
+        fs.writeFileSync(config.output + '/' + key[0].toLocaleLowerCase() + key.slice(1) + '.js', 'module.exports = ' + util.inspect(val, { compact: false }), 'utf-8');
     }
 }
 
@@ -116,6 +116,6 @@ exports.generateFile = (config) => {
     fs.mkdirSync(config.output, { recursive: true });
 
     for (let route of config.routes) {
-        fs.writeFileSync(config.output + '/' + route + '.js', 'module.exports = ' + util.inspect(returnDefaultRoutes()), 'utf-8');
+        fs.writeFileSync(config.output + '/' + route + '.js', 'module.exports = ' + util.inspect(returnDefaultRoutes(), { compact: false }), 'utf-8');
     }
 }
